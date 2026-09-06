@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para: Agos </title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Fredoka:wght@400;500;600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti Library for blowing candles effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --pink-soft: #fff0f5;
+            --pink-light: #fde2e4;
+            --pink-medium: #ffb7c5;
+            --pink-accent: #ff85a1;
+            --pink-deep: #ff477e;
+            --gold: #f7d070;
+            --gold-shadow: #e0b034;
+            --text-color: #5c3d46;
+            --white: #ffffff;
+            --shadow-soft: 0 8px 25px rgba(255, 133, 161, 0.15);
+            --shadow-card: 0 10px 30px rgba(255, 133, 161, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 50%, #ffb3c1 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Continuous subtle background shimmer */
+        .bg-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 133, 161, 0.35);
+            animation: floatUp 12s linear infinite;
+            font-size: 1.2rem;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) scale(0.8) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header section */
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(8px);
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: var(--shadow-soft);
+            margin-top: 20px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--pink-accent), var(--pink-deep));
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(255, 71, 126, 0.3);
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--pink-deep);
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: #7a525e;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        /* Section Titles */
+        .section-title {
+            text-align: center;
+            margin: 40px 0 25px;
+        }
+
+        .section-title h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            color: var(--pink-deep);
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-title h2::after {
+            content: '';
+            display: block;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--pink-medium), var(--pink-accent));
+            border-radius: 2px;
+            margin: 6px auto 0;
+        }
+
+        .section-desc {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #8c636f;
+            margin-bottom: 30px;
+        }
+
+        /* Envelope Section */
+        .envelopes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .envelope-wrapper {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background-color: var(--pink-light);
+            border-radius: 16px;
+            box-shadow: var(--shadow-card);
+            border: 2px solid #ffccd5;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .envelope:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(255, 133, 161, 0.3);
+        }
+
+        .envelope-icon {
+            font-size: 3rem;
+            color: var(--pink-accent);
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope:hover .envelope-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .envelope-tag {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            color: var(--pink-deep);
+            font-weight: 500;
+        }
+
+        .envelope-hint {
+            font-size: 0.8rem;
+            color: #a87b87;
+            margin-top: 6px;
+        }
+
+        /* Letter Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(92, 61, 70, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .letter-card {
+            background: #ffffff;
+            background-image: radial-gradient(#ffe6ea 1px, transparent 0);
+            background-size: 16px 16px;
+            max-width: 550px;
+            width: 100%;
+            border-radius: 24px;
+            padding: 35px 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border: 3px solid var(--pink-light);
+            transform: scale(0.8) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            text-align: center;
+        }
+
+        .modal-overlay.active .letter-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: var(--pink-soft);
+            border: none;
+            color: var(--pink-deep);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .close-btn:hover {
+            background: var(--pink-medium);
+            color: white;
+        }
+
+        .letter-header {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.3rem;
+            color: var(--pink-deep);
+            margin-bottom: 20px;
+        }
+
+        .letter-body {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #4a333a;
+            margin-bottom: 25px;
+            text-align: left;
+            white-space: pre-line;
+        }
+
+        .letter-footer {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.95rem;
+            color: var(--pink-accent);
+            text-align: right;
+            font-weight: 500;
+        }
+
+        /* Friendship Coupons Grid */
+        .coupons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .coupon-card {
+            background: white;
+            border: 2px dashed var(--pink-accent);
+            border-radius: 18px;
+            padding: 20px;
+            position: relative;
+            transition: transform 0.25s ease;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .coupon-card:hover {
+            transform: translateY(-4px) rotate(-1deg);
+        }
+
+        .coupon-badge {
+            position: absolute;
+            top: -12px;
+            right: 15px;
+            background: var(--gold);
+            color: #5a4300;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-family: 'Fredoka', sans-serif;
+            text-transform: uppercase;
+            box-shadow: 0 2px 6px rgba(224, 176, 52, 0.4);
+        }
+
+        .coupon-icon {
+            font-size: 2rem;
+            color: var(--pink-accent);
+            margin-bottom: 10px;
+        }
+
+        .coupon-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2rem;
+            color: var(--pink-deep);
+            margin-bottom: 8px;
+        }
+
+        .coupon-desc {
+            font-size: 0.9rem;
+            color: #6e525a;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .coupon-btn {
+            background: var(--pink-light);
+            color: var(--pink-deep);
+            border: 1px solid var(--pink-medium);
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            align-self: flex-start;
+        }
+
+        .coupon-btn:hover {
+            background: var(--pink-accent);
+            color: white;
+        }
+
+        .coupon-btn.redeemed {
+            background: #e2e8f0;
+            color: #94a3b8;
+            border-color: #cbd5e1;
+            cursor: default;
+        }
+
+        /* Cake Section */
+        .cake-section {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px 20px;
+            text-align: center;
+            border: 2px solid white;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 30px;
+        }
+
+        .cake-container {
+            position: relative;
+            height: 250px;
+            width: 250px;
+            margin: 20px auto 30px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        /* CSS Cake Construction */
+        .plate {
+            width: 240px;
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            position: absolute;
+            bottom: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .layer {
+            position: absolute;
+            border-radius: 12px 12px 6px 6px;
+        }
+
+        .layer-bottom {
+            width: 200px;
+            height: 70px;
+            background: linear-gradient(to right, #ffb7c5, #ff85a1, #ffb7c5);
+            bottom: 12px;
+            box-shadow: inset 0 -8px 0 rgba(0,0,0,0.05);
+        }
+
+        .layer-bottom::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 15px;
+            background: #ffffff;
+            border-radius: 12px 12px 10px 10px;
+        }
+
+        .layer-top {
+            width: 150px;
+            height: 60px;
+            background: linear-gradient(to right, #ffe6ea, #ffccd5, #ffe6ea);
+            bottom: 82px;
+            box-shadow: inset 0 -6px 0 rgba(0,0,0,0.03);
+        }
+
+        .layer-top::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 14px;
+            background: #ffffff;
+            border-radius: 12px 12px 8px 8px;
+        }
+
+        /* Cherries/Decorations */
+        .decoration {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--pink-deep);
+            border-radius: 50%;
+            top: -6px;
+        }
+
+        /* Candle & Flame */
+        .candle-group {
+            position: absolute;
+            bottom: 142px;
+            display: flex;
+            gap: 25px;
+            z-index: 5;
+        }
+
+        .candle {
+            width: 12px;
+            height: 45px;
+            background: repeating-linear-gradient(
+                45deg,
+                #fff,
+                #fff 5px,
+                #ff85a1 5px,
+                #ff85a1 10px
+            );
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .flame {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 20px;
+            background: linear-gradient(to top, #ff9e00, #ffeb3b, #ffffff);
+            border-radius: 50% 50% 35% 35%;
+            box-shadow: 0 0 12px #ff9e00, 0 0 20px #ffeb3b;
+            animation: flicker 0.8s infinite alternate ease-in-out;
+            transform-origin: center bottom;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1) rotate(-2deg); }
+            100% { transform: translateX(-50%) scale(1.1) rotate(2deg); }
+        }
+
+        /* Smoke animation when blown out */
+        .smoke {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: rgba(180, 180, 180, 0.6);
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .candle.off .flame {
+            display: none;
+        }
+
+        .candle.off .smoke {
+            animation: puff 1.2s ease-out forwards;
+        }
+
+        @keyframes puff {
+            0% { opacity: 0.8; transform: translateX(-50%) translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-35px) scale(3); }
+        }
+
+        /* Wish Box */
+        .wish-box {
+            margin-top: 20px;
+            min-height: 60px;
+        }
+
+        .wish-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: var(--pink-deep);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+
+        .wish-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .blow-btn {
+            background: linear-gradient(45deg, var(--pink-accent), var(--pink-deep));
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-family: 'Fredoka', sans-serif;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(255, 71, 126, 0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .blow-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 22px rgba(255, 71, 126, 0.45);
+        }
+
+        .blow-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: #8a6470;
+        }
+
+        footer i {
+            color: var(--pink-deep);
+        }
+
+        /* Responsive rules */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            .section-title h2 { font-size: 1.6rem; }
+            .envelopes-grid { grid-template-columns: 1fr; }
+            .letter-card { padding: 25px 18px; }
+            .letter-header { font-size: 1.8rem; }
+            .letter-body { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating hearts container -->
+    <div class="bg-hearts" id="heartsContainer"></div>
+
+    <div class="container">
+        
+        <!-- HEADER -->
+        <header>
+            <div class="header-badge"> un pequeño regalo </div>
+            <h1>¡Feliz Cumpleaños Amigaaa!</h1>
+            <p class="subtitle">
+                Sé que los cumpleaños no son tus días favoritos, peroooo fue inevitable no hacerte un regalo
+                Este es solo es un espacio bonito hecho para recordarte lo mucho que te quiero y lo especial que sos 💖
+            </p>
+        </header>
+
+        <!-- CARTITAS / SOBRES INTERACTIVOS -->
+        <section>
+            <div class="section-title">
+                <h2>Cartitas </h2>
+            </div>
+            <p class="section-desc">Hacé clic en cada sobre para abrir los mensajes </p>
+            
+            <div class="envelopes-grid">
+                <!-- Sobre 1 -->
+                <div class="envelope-wrapper" onclick="openLetter(1)">
+                    <div class="envelope">
+                        <i class="fa-solid fa-heart envelope-icon"></i>
+                        <div class="envelope-tag">Cumpleaños </div>
+                        <div class="envelope-hint">Toca para abrir 🌸</div>
+                    </div>
+                </div>
+
+                <!-- Sobre 2 -->
+                <div class="envelope-wrapper" onclick="openLetter(2)">
+                    <div class="envelope">
+                        <i class="fa-solid fa-star envelope-icon"></i>
+                        <div class="envelope-tag">Lo increíble que sos</div>
+                        <div class="envelope-hint">Toca para abrir ✨</div>
+                    </div>
+                </div>
+
+                <!-- Sobre 3 -->
+                <div class="envelope-wrapper" onclick="openLetter(3)">
+                    <div class="envelope">
+                        <i class="fa-solid fa-cloud-sun envelope-icon"></i>
+                        <div class="envelope-tag">A tu propio ritmo</div>
+                        <div class="envelope-hint">Toca para abrir 🌿</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CUPONES DE AMISTAD -->
+        <section>
+            <div class="section-title">
+                <h2>Cupones 🎟️</h2>
+            </div>
+            <p class="section-desc">Válidos para cualquier momento del año, podes canjearlos cuando quieras!</p>
+
+            <div class="coupons-grid">
+                <!-- Cupón 1 -->
+                <div class="coupon-card">
+                    <div class="coupon-badge">Infinito</div>
+                    <div>
+                        <i class="fa-solid fa-film coupon-icon"></i>
+                        <div class="coupon-title">Tarde de Pelis y Comida</div>
+                        <div class="coupon-desc">Válido por una maratón de tu serie o película favorita, con tu snack preferido y full chismes</div>
+                    </div>
+                    <button class="coupon-btn" onclick="redeemCoupon(this)">¡Canjear Cupón!</button>
+                </div>
+
+                <!-- Cupón 2 -->
+                <div class="coupon-card">
+                    <div class="coupon-badge">Especial</div>
+                    <div>
+                        <i class="fa-solid fa-face-smile-beam coupon-icon"></i>
+                        <div class="coupon-title">Abrazo</div>
+                        <div class="coupon-desc">Un abrazo gigante cuando lo necesites, sin preguntas, sin explicaciones </div>
+                    </div>
+                    <button class="coupon-btn" onclick="redeemCoupon(this)">¡Canjear Cupón!</button>
+                </div>
+
+                <!-- Cupón 3 -->
+                <div class="coupon-card">
+                    <div class="coupon-badge">Sin Expiración</div>
+                    <div>
+                        <i class="fa-solid fa-mug-hot coupon-icon"></i>
+                        <div class="coupon-title">Escucha Incondicional</div>
+                        <div class="coupon-desc">Válido para desahogarte a la hora que sea, por audio o mensaje, sabiendo que estoy ahi para vos</div>
+                    </div>
+                    <button class="coupon-btn" onclick="redeemCoupon(this)">¡Canjear Cupón!</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE LA TORTA -->
+        <section class="cake-section">
+            <div class="section-title" style="margin-top: 0;">
+                <h2>Un Deseo para vos 🎂</h2>
+            </div>
+            <p class="section-desc">Toca las velitas o presiona el botón para soplarlas </p>
+
+            <div class="cake-container">
+                <div class="candle-group">
+                    <div class="candle" onclick="toggleCandle(this)">
+                        <div class="flame"></div>
+                        <div class="smoke"></div>
+                    </div>
+                    <div class="candle" onclick="toggleCandle(this)">
+                        <div class="flame"></div>
+                        <div class="smoke"></div>
+                    </div>
+                    <div class="candle" onclick="toggleCandle(this)">
+                        <div class="flame"></div>
+                        <div class="smoke"></div>
+                    </div>
+                </div>
+
+                <div class="layer layer-top">
+                    <div class="decoration" style="left: 20px;"></div>
+                    <div class="decoration" style="left: 65px;"></div>
+                    <div class="decoration" style="left: 115px;"></div>
+                </div>
+                <div class="layer layer-bottom">
+                    <div class="decoration" style="left: 35px;"></div>
+                    <div class="decoration" style="left: 95px;"></div>
+                    <div class="decoration" style="left: 155px;"></div>
+                </div>
+                <div class="plate"></div>
+            </div>
+
+            <button class="blow-btn" id="blowBtn" onclick="blowOutCandles()">💨 Soplar Velitas</button>
+
+            <div class="wish-box">
+                <div class="wish-message" id="wishMessage">
+                    Que todos tus deseos se cumplan amiga te quiero muchísimo ✨
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            espero que hayas pasado un lindo dia y perdooon la demora hubo varios bugs inesperados <i class="fa-solid fa-heart"></i>
+        </footer>
+    </div>
+
+    <!-- MODAL DE CARTAS -->
+    <div class="modal-overlay" id="letterModal" onclick="closeOnOverlay(event)">
+        <div class="letter-card">
+            <button class="close-btn" onclick="closeLetter()">&times;</button>
+            <div class="letter-header" id="modalTitle">Título</div>
+            <div class="letter-body" id="modalBody">Contenido de la carta...</div>
+            <div class="letter-footer">Con mucho cariño </div>
+        </div>
+    </div>
+
+    <script>
+        /* Floating background hearts generation */
+        function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            const heartIcons = ['fa-heart', 'fa-sparkles', 'fa-star'];
+            
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('i');
+                heart.classList.add('fa-solid', 'fa-heart', 'floating-heart');
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 6 + 7) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.fontSize = (Math.random() * 12 + 12) + 'px';
+                heart.style.opacity = Math.random() * 0.5 + 0.2;
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        /* Letters Content */
+        const letters = {
+            1: {
+                title: "💕",
+                body: "Sé que a veces las fechas como los cumpleaños pueden sentirse abrumadoras o con demasiadas expectativas.\n\nPor eso hoy solo quiero que sea un día normal pero lindo, no tenes que celebrar en grande ni poner una cara feliz si no te nace, lo único importante es que recuerdes lo muchísimo que vales para mí y para las personas que te rodean"
+            },
+            2: {
+                title: "✨",
+                body: "Hoy quiero recordarte algo\n\nsos una persona increíblemente fuerte, empática, auténtica y con un corazón gigantesco, tenerte como mejor amiga es uno de los regalos más bonitos de mi vida, gracias por existir y por ser tal cual sos"
+            },
+            3: {
+                title: "🌿",
+                body: "Un nuevo año de vida no significa que tengas que tener todo resuelto ni haber alcanzado mil metas\n\nestá bien ir despacio, está bien tener días confusos y está bien tomarte tu tiempo, se que no soy mucho de responder rapido pero en tus mejores días y también en los flojitos voy acompañándote en lo que necesites"
+            }
+        };
+
+        function openLetter(id) {
+            const modal = document.getElementById('letterModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.innerText = letters[id].title;
+            body.innerText = letters[id].body;
+
+            modal.classList.add('active');
+        }
+
+        function closeLetter() {
+            document.getElementById('letterModal').classList.remove('active');
+        }
+
+        function closeOnOverlay(event) {
+            if (event.target.id === 'letterModal') {
+                closeLetter();
+            }
+        }
+
+        /* Redeem Coupon Logic */
+        function redeemCoupon(button) {
+            if (!button.classList.contains('redeemed')) {
+                button.classList.add('redeemed');
+                button.innerText = '¡Cupón Canjeado!';
+                
+                // Mini celebration confetti for coupon
+                confetti({
+                    particleCount: 30,
+                    spread: 50,
+                    origin: { y: 0.7 },
+                    colors: ['#ff85a1', '#ffccd5', '#f7d070']
+                });
+            }
+        }
+
+        /* Cake Candle Logic */
+        let activeCandles = 3;
+
+        function toggleCandle(candle) {
+            if (!candle.classList.contains('off')) {
+                candle.classList.add('off');
+                activeCandles--;
+                checkCandles();
+            }
+        }
+
+        function blowOutCandles() {
+            const candles = document.querySelectorAll('.candle');
+            candles.forEach(candle => {
+                candle.classList.add('off');
+            });
+            activeCandles = 0;
+            checkCandles();
+        }
+
+        function checkCandles() {
+            if (activeCandles <= 0) {
+                const wishMsg = document.getElementById('wishMessage');
+                const blowBtn = document.getElementById('blowBtn');
+                
+                wishMsg.classList.add('show');
+                blowBtn.style.display = 'none';
+
+                // Confetti Explosion!
+                const count = 200;
+                const defaults = {
+                    origin: { y: 0.7 }
+                };
+
+                function fire(particleRatio, opts) {
+                    confetti(Object.assign({}, defaults, opts, {
+                        particleCount: Math.floor(count * particleRatio)
+                    }));
+                }
+
+                fire(0.25, {
+                    spread: 26,
+                    startVelocity: 55,
+                    colors: ['#ff85a1', '#ffffff']
+                });
+                fire(0.2, {
+                    spread: 60,
+                    colors: ['#f7d070', '#ff477e']
+                });
+                fire(0.35, {
+                    spread: 100,
+                    decay: 0.91,
+                    scalar: 0.8
+                });
+                fire(0.1, {
+                    spread: 120,
+                    startVelocity: 25,
+                    decay: 0.92,
+                    colors: ['#ffccd5', '#ff85a1']
+                });
+                fire(0.1, {
+                    spread: 120,
+                    startVelocity: 45,
+                });
+            }
+        }
+    </script>
+</body>
+</html>
